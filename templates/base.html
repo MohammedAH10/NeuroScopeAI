@@ -1,28 +1,283 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}M.A.I.B.A.S{% endblock %}</title>
+    <title>{% block title %}NeuroScope MRI{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#0c0c12',
+                        slatevoid: '#171922',
+                        mist: '#c9cae3',
+                        violetdeep: '#4d1d95',
+                        violetglass: '#2a124e',
+                        violetedge: '#8d5cf6',
+                        rosepulse: '#ff77c8'
+                    },
+                    boxShadow: {
+                        glow: '0 0 0 1px rgba(141, 92, 246, 0.22), 0 20px 60px rgba(0, 0, 0, 0.45)'
+                    }
+                }
+            }
+        };
+    </script>
     <style>
+        :root {
+            color-scheme: dark;
+            --bg-1: #09090f;
+            --bg-2: #151723;
+            --glass: rgba(31, 17, 56, 0.58);
+            --glass-strong: rgba(45, 20, 82, 0.72);
+            --stroke: rgba(168, 138, 255, 0.24);
+            --text-soft: rgba(222, 224, 255, 0.78);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            min-height: 100vh;
+            color: #f3f2ff;
+            background:
+                radial-gradient(circle at top left, rgba(123, 44, 191, 0.32), transparent 28%),
+                radial-gradient(circle at top right, rgba(94, 23, 235, 0.18), transparent 30%),
+                radial-gradient(circle at bottom center, rgba(31, 86, 152, 0.18), transparent 35%),
+                linear-gradient(135deg, var(--bg-1), var(--bg-2) 52%, #101117);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6, .display-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .medical-grid {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.22;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(circle at center, black 45%, transparent 92%);
+        }
+
+        .glass-card {
+            background: linear-gradient(180deg, rgba(62, 28, 110, 0.62), rgba(20, 20, 31, 0.72));
+            border: 1px solid var(--stroke);
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03) inset, 0 24px 80px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .glass-panel {
+            background: linear-gradient(180deg, rgba(48, 23, 86, 0.7), rgba(20, 21, 30, 0.78));
+            border: 1px solid rgba(182, 154, 255, 0.18);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .hero-orb,
+        .floating-medical {
+            position: absolute;
+            border-radius: 9999px;
+            filter: blur(12px);
+            opacity: 0.45;
+            animation: drift 14s ease-in-out infinite;
+        }
+
+        .hero-orb.one {
+            width: 18rem;
+            height: 18rem;
+            background: radial-gradient(circle, rgba(141, 92, 246, 0.55), transparent 65%);
+            top: -4rem;
+            left: -5rem;
+        }
+
+        .hero-orb.two {
+            width: 22rem;
+            height: 22rem;
+            background: radial-gradient(circle, rgba(255, 119, 200, 0.28), transparent 65%);
+            right: -6rem;
+            top: 4rem;
+            animation-delay: -5s;
+        }
+
+        .floating-medical {
+            width: 12rem;
+            height: 12rem;
+            background: linear-gradient(180deg, rgba(76, 29, 149, 0.2), rgba(20, 20, 28, 0.05));
+            border: 1px solid rgba(193, 173, 255, 0.12);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .floating-medical svg {
+            width: 100%;
+            height: 100%;
+            opacity: 0.26;
+        }
+
+        .float-a {
+            top: 8rem;
+            left: 3%;
+        }
+
+        .float-b {
+            top: 34rem;
+            right: 4%;
+            animation-delay: -3s;
+        }
+
+        .float-c {
+            bottom: 8rem;
+            left: 10%;
+            animation-delay: -7s;
+        }
+
+        .pulse-line {
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 180px;
+            opacity: 0.18;
+            overflow: hidden;
+        }
+
+        .pulse-line svg {
+            width: 100%;
+            height: 100%;
+            animation: pulseShift 10s linear infinite;
+        }
+
         .flash-messages {
             position: fixed;
             top: 1rem;
             right: 1rem;
-            z-index: 50;
+            z-index: 60;
+            width: min(26rem, calc(100vw - 2rem));
+        }
+
+        .fade-up {
+            animation: fadeUp 0.8s ease both;
+        }
+
+        .fade-up-delay {
+            animation: fadeUp 1s ease both;
+            animation-delay: 0.15s;
+        }
+
+        .fade-up-delay-2 {
+            animation: fadeUp 1.15s ease both;
+            animation-delay: 0.3s;
+        }
+
+        .glow-ring {
+            box-shadow: 0 0 0 1px rgba(177, 136, 255, 0.22), 0 0 48px rgba(93, 39, 184, 0.35);
+        }
+
+        .soft-text {
+            color: var(--text-soft);
+        }
+
+        .stat-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .section-anchor {
+            scroll-margin-top: 6rem;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+            50% { transform: translateY(-18px) translateX(10px) rotate(4deg); }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseShift {
+            from { transform: translateX(0); }
+            50% { transform: translateX(-3%); }
+            to { transform: translateX(0); }
+        }
+
+        @media (max-width: 768px) {
+            .floating-medical {
+                width: 8rem;
+                height: 8rem;
+            }
         }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <nav class="bg-blue-600 text-white shadow-lg">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="/" class="text-2xl font-bold">MRI Analysis</a>
-            <div class="space-x-4">
-                <a href="/" class="hover:text-blue-200">Home</a>
-                <a href="/history" class="hover:text-blue-200">History</a>
+<body class="relative">
+    <div class="medical-grid"></div>
+    <div class="hero-orb one"></div>
+    <div class="hero-orb two"></div>
+
+    <div class="floating-medical float-a hidden md:block">
+        <svg viewBox="0 0 200 200" fill="none">
+            <rect x="44" y="34" width="112" height="132" rx="18" stroke="#d7c8ff" stroke-width="7"/>
+            <path d="M100 68V132M68 100H132" stroke="#ff9ad7" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+    </div>
+    <div class="floating-medical float-b hidden lg:block">
+        <svg viewBox="0 0 200 200" fill="none">
+            <path d="M26 112H62L78 74L102 132L120 96L138 112H176" stroke="#d7c8ff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="100" cy="100" r="66" stroke="#b88aff" stroke-width="7"/>
+        </svg>
+    </div>
+    <div class="floating-medical float-c hidden md:block">
+        <svg viewBox="0 0 200 200" fill="none">
+            <path d="M56 64C69 47 88 38 100 38C124 38 144 56 144 80C144 117 100 152 100 152C100 152 56 117 56 80C56 74 57 69 56 64Z" stroke="#d7c8ff" stroke-width="7"/>
+            <path d="M74 94H92L102 78L114 116L124 94H136" stroke="#ff9ad7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <div class="pulse-line">
+        <svg viewBox="0 0 1440 200" preserveAspectRatio="none" fill="none">
+            <path d="M0 120H160L220 120L260 72L320 164L372 106L416 120H564L612 120L650 80L710 164L760 100L806 120H1008L1060 120L1096 92L1140 148L1186 120H1440" stroke="url(#pulseGradient)" stroke-width="4" stroke-linecap="round" />
+            <defs>
+                <linearGradient id="pulseGradient" x1="0" y1="0" x2="1440" y2="0">
+                    <stop offset="0%" stop-color="#6d28d9" stop-opacity="0"/>
+                    <stop offset="25%" stop-color="#a78bfa"/>
+                    <stop offset="65%" stop-color="#f472b6"/>
+                    <stop offset="100%" stop-color="#6d28d9" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
+
+    <nav class="sticky top-0 z-50 border-b border-white/10 bg-black/20 backdrop-blur-xl">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+            <a href="/" class="display-font text-xl font-bold tracking-wide text-white">NeuroScope MRI</a>
+            <div class="hidden items-center gap-6 text-sm text-white/70 md:flex">
+                <a href="/" class="transition hover:text-white">Home</a>
+                <a href="/analyze" class="transition hover:text-white">Analyze</a>
+                <a href="/history" class="transition hover:text-white">History</a>
+                <a href="/#how-to-use" class="transition hover:text-white">How To Use</a>
             </div>
         </div>
     </nav>
@@ -31,7 +286,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="bg-{{ 'red' if category == 'error' else 'green' }}-100 border border-{{ 'red' if category == 'error' else 'green' }}-400 text-{{ 'red' if category == 'error' else 'green' }}-700 px-4 py-3 rounded mb-2">
+                    <div class="mb-3 rounded-2xl border px-4 py-3 text-sm shadow-glow backdrop-blur-xl {% if category == 'error' %}border-rose-300/20 bg-rose-500/12 text-rose-100{% else %}border-emerald-300/20 bg-emerald-500/12 text-emerald-100{% endif %}">
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -39,13 +294,14 @@
         {% endwith %}
     </div>
 
-    <main class="container mx-auto px-4 py-8">
+    <main class="relative z-10 mx-auto min-h-[calc(100vh-160px)] max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-blue-600 text-white py-4 mt-auto">
-        <div class="container mx-auto px-4 text-center">
-            <p>© 2025 MRI Analysis System. All rights reserved.</p>
+    <footer class="relative z-10 border-t border-white/10 bg-black/20 py-6 backdrop-blur-xl">
+        <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 text-sm text-white/60 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+            <p>NeuroScope MRI interface for educational brain MRI screening workflows.</p>
+            <p>Classification, segmentation, and report history in one interface.</p>
         </div>
     </footer>
 

@@ -1,115 +1,132 @@
-<!-- templates/index.html -->
 {% extends "base.html" %}
 
-{% block title %}MRI Analysis System - Home{% endblock %}
+{% block title %}NeuroScope MRI | Intelligent Brain Scan Review{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-        <h1 class="text-3xl font-bold text-blue-600 mb-4">Brain MRI Analysis and System</h1>
-        <p class="text-gray-700 mb-6">
-            Upload a brain MRI image to analyze it for tumor classification and segmentation. 
-            Our system uses advanced deep learning models to:
+<section class="relative overflow-hidden rounded-[2rem] glass-card px-6 py-10 sm:px-8 lg:px-12 lg:py-14">
+    <div class="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+        <div>
+            <div class="fade-up inline-flex items-center gap-2 rounded-full border border-violet-300/15 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-violet-100/80">
+                MRI Tumor Classification and Segmentation
+            </div>
+
+            <h1 class="fade-up-delay mt-6 max-w-3xl text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
+                Dark clinical imaging, fast AI review, and a calmer way to inspect brain MRI scans.
+            </h1>
+
+            <p class="fade-up-delay-2 mt-6 max-w-2xl text-base leading-8 soft-text sm:text-lg">
+                NeuroScope MRI is a medical-inspired landing interface for uploading a brain MRI image, classifying tumor likelihood, generating a segmentation overlay, and storing the result history in a single workflow.
+            </p>
+
+            <div class="fade-up-delay-2 mt-8 flex flex-col gap-4 sm:flex-row">
+                <a href="{{ url_for('analyze') }}" class="glow-ring inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-violet-700 via-purple-600 to-fuchsia-500 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(168,85,247,0.35)]">
+                    Get Started
+                </a>
+                <a href="#full-description" class="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white/80 transition hover:border-violet-300/30 hover:bg-white/10 hover:text-white">
+                    Full Description
+                </a>
+            </div>
+
+            <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                <div class="stat-chip rounded-2xl p-4 fade-up">
+                    <p class="text-xs uppercase tracking-[0.2em] text-white/45">Output</p>
+                    <p class="mt-2 text-lg font-semibold text-white">Tumor Class</p>
+                </div>
+                <div class="stat-chip rounded-2xl p-4 fade-up-delay">
+                    <p class="text-xs uppercase tracking-[0.2em] text-white/45">Overlay</p>
+                    <p class="mt-2 text-lg font-semibold text-white">Segmentation Mask</p>
+                </div>
+                <div class="stat-chip rounded-2xl p-4 fade-up-delay-2">
+                    <p class="text-xs uppercase tracking-[0.2em] text-white/45">Tracking</p>
+                    <p class="mt-2 text-lg font-semibold text-white">Saved History</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="fade-up-delay relative">
+            <div class="glass-panel rounded-[2rem] p-5 shadow-glow">
+                <div class="mb-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.22em] text-violet-100/50">Live Preview</p>
+                        <h2 class="mt-1 text-2xl font-bold text-white">Clinical AI Dashboard</h2>
+                    </div>
+                    <span class="rounded-full border border-emerald-300/20 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-100">Ready</span>
+                </div>
+
+                <div class="grid gap-4">
+                    <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-[#1b1731] to-[#271146] p-4">
+                        <div class="flex items-center justify-between text-sm text-white/70">
+                            <span>Scan Focus</span>
+                            <span>Brain MRI</span>
+                        </div>
+                        <div class="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-[#090811] p-4">
+                            <svg viewBox="0 0 360 220" class="h-auto w-full">
+                                <defs>
+                                    <linearGradient id="brainGlow" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#7c3aed"/>
+                                        <stop offset="100%" stop-color="#f472b6"/>
+                                    </linearGradient>
+                                </defs>
+                                <rect width="360" height="220" rx="24" fill="#0b0b13"/>
+                                <circle cx="180" cy="110" r="74" fill="none" stroke="#8b5cf6" stroke-opacity="0.25" stroke-width="2"/>
+                                <path d="M122 90C125 63 150 49 180 49C211 49 237 64 238 90C260 102 271 127 264 149C256 173 231 182 211 176C197 188 164 190 147 177C118 180 96 166 92 140C88 119 98 100 122 90Z" fill="none" stroke="url(#brainGlow)" stroke-width="4"/>
+                                <path d="M180 56V168M147 71C159 88 159 130 147 146M213 71C201 88 201 130 213 146M125 99C144 106 150 114 156 124M235 99C216 106 210 114 204 124" stroke="#f5d0fe" stroke-opacity="0.65" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="224" cy="98" r="14" fill="#f472b6" fill-opacity="0.32"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                            <p class="text-xs uppercase tracking-[0.2em] text-white/45">Model Tasks</p>
+                            <p class="mt-2 text-sm leading-7 text-white/75">Upload, classify, segment, summarize, and review past analyses from one workflow.</p>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                            <p class="text-xs uppercase tracking-[0.2em] text-white/45">Design Language</p>
+                            <p class="mt-2 text-sm leading-7 text-white/75">Dark gray and dark purple glassmorphism with medical motion cues and clean contrast.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="full-description" class="section-anchor mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+    <div class="glass-panel rounded-[2rem] p-6 sm:p-8">
+        <p class="text-xs uppercase tracking-[0.24em] text-violet-100/50">UI Description</p>
+        <h2 class="mt-3 text-3xl font-bold text-white">A darker diagnostic interface built for focus.</h2>
+        <p class="mt-5 text-sm leading-8 soft-text sm:text-base">
+            The interface uses deep charcoal and layered purple glass panels to create a controlled medical workspace. Subtle motion, floating iconography, and soft pulse lines keep the screen active without distracting from the imaging task.
         </p>
-        <ul class="list-disc pl-6 mb-6 text-gray-700">
-            <li>Classify the type of brain tumor (glioma, meningioma, pituitary, or no tumor)</li>
-            <li>Segment the tumor area if present</li>
-            <li>Provide a medical summary of the findings</li>
-        </ul>
     </div>
 
-    <div class="bg-white rounded-lg shadow-lg p-6">
-        <h2 class="text-2xl font-bold text-blue-600 mb-4">Upload MRI Image</h2>
-        <form action="/upload" method="post" enctype="multipart/form-data" class="space-y-4">
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center" id="drop-area">
-                <div class="space-y-2">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p class="text-sm text-gray-600">Drag and drop your MRI image here</p>
-                    <p class="text-xs text-gray-500">JPG, JPEG, or PNG files only</p>
-                </div>
-                <input type="file" name="mri_image" id="file-input" class="hidden" accept=".jpg,.jpeg,.png">
-                <div class="mt-4">
-                    <label for="file-input" class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg inline-flex items-center">
-                        <span>Select File</span>
-                    </label>
-                </div>
-                <div id="file-preview" class="mt-4 hidden">
-                    <p class="text-sm text-gray-700">Selected file: <span id="file-name" class="font-medium"></span></p>
-                    <img id="image-preview" class="mt-2 max-h-48 mx-auto" src="" alt="Preview">
-                </div>
-            </div>
-            <div class="text-center">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition duration-200">
-                    Analyze MRI
-                </button>
-            </div>
-        </form>
+    <div class="glass-panel rounded-[2rem] p-6 sm:p-8">
+        <p class="text-xs uppercase tracking-[0.24em] text-violet-100/50">Full Description</p>
+        <h2 class="mt-3 text-3xl font-bold text-white">What this experience is designed to do.</h2>
+        <p class="mt-5 text-sm leading-8 soft-text sm:text-base">
+            This landing page introduces the MRI analysis workflow, explains what the tool produces, and gives a clear entry point into the upload process. It is meant to feel like a lightweight diagnostic portal rather than a generic file upload page, while remaining responsive across mobile, tablet, and desktop screens.
+        </p>
     </div>
-</div>
-{% endblock %}
+</section>
 
-{% block scripts %}
-<script>
-    const dropArea = document.getElementById('drop-area');
-    const fileInput = document.getElementById('file-input');
-    const filePreview = document.getElementById('file-preview');
-    const fileName = document.getElementById('file-name');
-    const imagePreview = document.getElementById('image-preview');
+<section id="how-to-use" class="section-anchor mt-8 grid gap-6 lg:grid-cols-3">
+    <div class="glass-panel rounded-[2rem] p-6">
+        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-lg font-bold text-violet-100">1</div>
+        <h3 class="text-xl font-bold text-white">Read The Overview</h3>
+        <p class="mt-3 text-sm leading-7 soft-text">Start on the landing page to understand the workflow, outputs, and intended use of the MRI analysis interface.</p>
+    </div>
 
-    // Prevent default drag behaviors
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-    });
+    <div class="glass-panel rounded-[2rem] p-6">
+        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-lg font-bold text-violet-100">2</div>
+        <h3 class="text-xl font-bold text-white">Go To Analysis</h3>
+        <p class="mt-3 text-sm leading-7 soft-text">Use the `Get Started` button to move into the dedicated upload workspace where the scan is submitted.</p>
+    </div>
 
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    // Highlight drop area when item is dragged over it
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false);
-    });
-
-    function highlight() {
-        dropArea.classList.add('border-blue-500', 'bg-blue-50');
-    }
-
-    function unhighlight() {
-        dropArea.classList.remove('border-blue-500', 'bg-blue-50');
-    }
-
-    // Handle dropped files
-    dropArea.addEventListener('drop', handleDrop, false);
-
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        fileInput.files = files;
-        updateFilePreview();
-    }
-
-    fileInput.addEventListener('change', updateFilePreview);
-
-    function updateFilePreview() {
-        if (fileInput.files && fileInput.files[0]) {
-            const file = fileInput.files[0];
-            fileName.textContent = file.name;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                imagePreview.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-            
-            filePreview.classList.remove('hidden');
-        }
-    }
-</script>
+    <div class="glass-panel rounded-[2rem] p-6">
+        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-lg font-bold text-violet-100">3</div>
+        <h3 class="text-xl font-bold text-white">Review Output</h3>
+        <p class="mt-3 text-sm leading-7 soft-text">Inspect the overlay image, detected class, confidence score, and stored analysis history from the same interface.</p>
+    </div>
+</section>
 {% endblock %}

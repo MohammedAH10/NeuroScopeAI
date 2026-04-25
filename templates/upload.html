@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}NeuroScope MRI | Upload And Predict{% endblock %}
+
+{% block content %}
+<section class="rounded-[2rem] glass-card p-6 sm:p-8 lg:p-10">
+    <div class="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+        <div class="space-y-6">
+            <div class="glass-panel rounded-[2rem] p-6 sm:p-8">
+                <p class="text-xs uppercase tracking-[0.24em] text-violet-100/50">Step Two</p>
+                <h1 class="mt-3 text-3xl font-bold text-white sm:text-4xl">Upload MRI And Run Prediction</h1>
+                <p class="mt-4 text-sm leading-8 soft-text sm:text-base">
+                    This is the analysis workspace. Upload a brain MRI image here and the system will classify the scan, generate a segmentation overlay, and store the result in history.
+                </p>
+            </div>
+
+            <div class="glass-panel rounded-[2rem] p-6">
+                <p class="text-xs uppercase tracking-[0.22em] text-violet-100/50">What Happens Here</p>
+                <div class="mt-4 grid gap-4 sm:grid-cols-3">
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-lg font-bold text-white">1</p>
+                        <p class="mt-2 text-sm text-white/75">Image preprocessing prepares the scan for the trained models.</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-lg font-bold text-white">2</p>
+                        <p class="mt-2 text-sm text-white/75">Classification and segmentation run to produce prediction output.</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-lg font-bold text-white">3</p>
+                        <p class="mt-2 text-sm text-white/75">The result page shows confidence, overlay image, and summary.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="upload-section" class="glass-panel rounded-[2rem] p-5 sm:p-6 lg:p-8">
+            <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.24em] text-violet-100/50">Upload Workspace</p>
+                    <h2 class="mt-2 text-2xl font-bold text-white sm:text-3xl">Select An MRI Image</h2>
+                </div>
+                <span class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-white/65">
+                    JPG, JPEG, PNG
+                </span>
+            </div>
+
+            <form action="/upload" method="post" enctype="multipart/form-data" class="space-y-6">
+                <div id="drop-area" class="group relative overflow-hidden rounded-[2rem] border border-dashed border-violet-300/25 bg-gradient-to-br from-white/5 to-violet-500/10 p-6 transition duration-300 hover:border-violet-300/40 hover:bg-white/10 sm:p-8">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.12),transparent_38%)] opacity-80"></div>
+                    <div class="relative z-10 flex flex-col items-center justify-center text-center">
+                        <div class="mb-5 flex h-20 w-20 items-center justify-center rounded-[1.75rem] border border-white/10 bg-black/20">
+                            <svg class="h-10 w-10 text-violet-100/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16l4.5-4.5a2 2 0 012.828 0l2.344 2.344a2 2 0 002.828 0L21 8.5" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 7h7m0 0v7m0-7L10 18" />
+                                <rect x="3" y="4" width="18" height="16" rx="3" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Drop your MRI image here</h3>
+                        <p class="mt-3 max-w-xl text-sm leading-7 soft-text">Preview the scan before analysis and then submit it to generate prediction output.</p>
+                        <input type="file" name="mri_image" id="file-input" class="hidden" accept=".jpg,.jpeg,.png">
+                        <label for="file-input" class="mt-6 inline-flex cursor-pointer items-center justify-center rounded-2xl bg-gradient-to-r from-violet-700 to-fuchsia-500 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-[1.02]">
+                            Select MRI File
+                        </label>
+                    </div>
+
+                    <div id="file-preview" class="relative z-10 mt-8 hidden rounded-[1.75rem] border border-white/10 bg-black/20 p-4 sm:p-6">
+                        <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <p class="text-sm text-white/75">Selected file: <span id="file-name" class="font-semibold text-white"></span></p>
+                            <span class="rounded-full border border-emerald-300/20 bg-emerald-500/12 px-3 py-1 text-xs font-semibold text-emerald-100">Preview Ready</span>
+                        </div>
+                        <div class="overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d16]">
+                            <img id="image-preview" class="max-h-[26rem] w-full object-contain" src="" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <a href="/" class="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white">
+                        Back To Landing Page
+                    </a>
+                    <button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-white px-6 py-3 text-sm font-bold text-[#140f25] transition duration-300 hover:scale-[1.02] hover:bg-violet-100">
+                        Analyze MRI
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('file-input');
+    const filePreview = document.getElementById('file-preview');
+    const fileName = document.getElementById('file-name');
+    const imagePreview = document.getElementById('image-preview');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach((eventName) => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach((eventName) => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+        dropArea.style.borderColor = 'rgba(216, 180, 254, 0.55)';
+        dropArea.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+    }
+
+    function unhighlight() {
+        dropArea.style.borderColor = '';
+        dropArea.style.backgroundColor = '';
+    }
+
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(event) {
+        const files = event.dataTransfer.files;
+        fileInput.files = files;
+        updateFilePreview();
+    }
+
+    fileInput.addEventListener('change', updateFilePreview);
+
+    function updateFilePreview() {
+        if (!fileInput.files || !fileInput.files[0]) {
+            return;
+        }
+
+        const file = fileInput.files[0];
+        fileName.textContent = file.name;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            imagePreview.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        filePreview.classList.remove('hidden');
+    }
+</script>
+{% endblock %}

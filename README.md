@@ -39,6 +39,7 @@ A Flask-based web application that analyzes brain MRI images for tumor classific
 
 5. **Run the application**
    ```
+   export OPENROUTER_API_KEY=your_openrouter_api_key
    python app.py
    ```
 
@@ -66,4 +67,4 @@ A Flask-based web application that analyzes brain MRI images for tumor classific
 ## Notes
 
 - This application is for educational purposes only and should not be used for actual medical diagnosis.
-- The "Gemini summary" feature is simulated in this version. In a production environment, you would integrate with Google's Gemini API.
+- The result summary uses OpenRouter through the OpenAI-compatible Python client and expects `OPENROUTER_API_KEY` to be set.

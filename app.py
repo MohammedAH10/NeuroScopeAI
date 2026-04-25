@@ -7,14 +7,15 @@ from tensorflow.keras.models import load_model
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg') 
-import base64
-from io import BytesIO
-import json
-import requests
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from datetime import datetime
-import google.generativeai as genai
+from markupsafe import escape
+
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
 
 
 
@@ -24,6 +25,7 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['RESULTS_FOLDER'] = 'static/results'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  
 app.config['ALLOWED_EXTENSIONS'] = {'jpg', 'jpeg', 'png'}
+app.config['OPENROUTER_MODEL'] = 'openai/gpt-oss-120b'
 
 # Create directories
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -95,32 +97,100 @@ def preprocess_image_for_segmentation(image_path):
     return np.expand_dims(img, axis=(0, -1))
 
 
+def format_summary_html(text):
+    paragraphs = [segment.strip() for segment in text.split('\n') if segment.strip()]
+    if not paragraphs:
+        return "<p>No summary available.</p>"
 
-# configure genai api
-genai.configure(api_key='AIzaSyDsk7uew0pRUr-jaYABqyUxdqpY8sLGi18')
-model = genai.GenerativeModel("gemini-1.5-flash")
-def get_bioGPT_summary(classification, confidence):
-    # This is a placeholder. In a real application, you would use BioGPT's API
-    # For now, we'll return a simple template-based summary
-    summaries = {
-        'glioma': "Glioma is a type of tumor that occurs in the brain and spinal cord. Gliomas begin in the glial cells that surround and support nerve cells. The treatment and prognosis depend on the grade and location of the tumor.",
-        'meningioma': "Meningioma is a tumor that forms on membranes that cover the brain and spinal cord just inside the skull. Most meningiomas are noncancerous, though rarely some can be cancerous. Treatment options include surgery, radiation therapy, and regular monitoring.",
-        'no_tumor': "No evidence of tumor detected in the MRI scan. Regular follow-up may still be recommended as per standard medical protocols.",
-        'pituitary': "Pituitary tumors are abnormal growths that develop in the pituitary gland at the base of the brain. Most pituitary tumors are noncancerous and don't spread to other parts of the body. Treatment options include surgery, radiation therapy, and medication."
+    formatted = ''.join(f"<p>{escape(paragraph)}</p>" for paragraph in paragraphs)
+    disclaimer = (
+        "<p><strong>Note:</strong> This explanation is educational and must not be used "
+        "as a medical diagnosis or treatment plan.</p>"
+    )
+    return formatted + disclaimer
+
+
+def get_fallback_summary(classification, confidence):
+    base_summaries = {
+        'glioma': (
+            "Glioma is a tumor arising from glial tissue in the brain. Clinical significance usually depends on tumor grade, location, and surrounding brain involvement. "
+            "Typical follow-up in real care includes radiology review, symptom correlation, and specialist evaluation."
+        ),
+        'meningioma': (
+            "Meningioma usually develops from the membranes surrounding the brain and is often slow-growing, though behavior varies by subtype and location. "
+            "Real-world next steps often include reviewing size, pressure effect, growth pattern, and need for observation versus intervention."
+        ),
+        'pituitary': (
+            "Pituitary tumors involve the pituitary region and may matter because of hormone effects, visual pathway compression, or local mass effect. "
+            "Clinical workup commonly includes endocrine assessment and focused review of symptoms such as headache or visual disturbance."
+        ),
+        'no_tumor': (
+            "No tumor class was detected by the model for this image. That does not rule out other abnormalities, image quality issues, or findings outside the model's scope. "
+            "Formal interpretation should still depend on a qualified radiology or neurology workflow when clinically needed."
+        )
     }
-    
-    confidence_statement = ""
+
     if confidence > 0.9:
-        confidence_statement = "The model has high confidence in this classification."
+        confidence_note = "The model confidence is high for this predicted class."
     elif confidence > 0.7:
-        confidence_statement = "The model has moderate confidence in this classification."
+        confidence_note = "The model confidence is moderate for this predicted class."
     else:
-        confidence_statement = "The model has low confidence in this classification. Consider seeking a second opinion."
-    
-    return f"{summaries.get(classification, 'Unknown tumor type')} {confidence_statement}"  
-    
-    
-    return response.text if response else "Error generating summary."
+        confidence_note = "The model confidence is limited, so the output should be treated cautiously."
+
+    combined = f"{base_summaries.get(classification, 'The predicted class is not recognized by the summary helper.')} {confidence_note}"
+    return format_summary_html(combined)
+
+
+def get_openrouter_summary(classification, confidence):
+    api_key = os.environ.get('OPENROUTER_API_KEY')
+    if not api_key or OpenAI is None:
+        return get_fallback_summary(classification, confidence)
+
+    client = OpenAI(
+        base_url='https://openrouter.ai/api/v1',
+        api_key=api_key,
+        default_headers={
+            'HTTP-Referer': 'http://127.0.0.1:5000',
+            'X-OpenRouter-Title': 'NeuroScope MRI'
+        }
+    )
+
+    prompt = (
+        f"Brain MRI model output:\n"
+        f"- Predicted classification: {classification}\n"
+        f"- Confidence: {confidence:.4f}\n\n"
+        "Write a concise educational explanation for a web app result page. "
+        "Explain what this tumor class generally means, why the confidence level matters, "
+        "what clinical factors are usually reviewed next, and one caution about not using AI output alone. "
+        "If the class is no_tumor, explain that no tumor was detected by the model but other abnormalities may still require professional review. "
+        "Keep it to 3 short paragraphs in plain text. Do not claim a diagnosis. Do not mention that you are an AI model."
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model=app.config['OPENROUTER_MODEL'],
+            messages=[
+                {
+                    'role': 'system',
+                    'content': (
+                        "You write careful educational MRI result summaries for a student medical imaging app. "
+                        "Be clinically literate, concise, and explicit that the output is not a diagnosis."
+                    )
+                },
+                {
+                    'role': 'user',
+                    'content': prompt
+                }
+            ],
+            temperature=0.4,
+            max_tokens=350
+        )
+        content = (response.choices[0].message.content or '').strip()
+        if not content:
+            return get_fallback_summary(classification, confidence)
+        return format_summary_html(content)
+    except Exception:
+        return get_fallback_summary(classification, confidence)
 
 def save_to_database(filename, original_path, result_path, classification, confidence, summary):
     conn = sqlite3.connect('brain_mri.db')
@@ -139,17 +209,21 @@ def save_to_database(filename, original_path, result_path, classification, confi
 def index():
     return render_template('index.html')
 
+@app.route('/analyze')
+def analyze():
+    return render_template('upload.html')
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'mri_image' not in request.files:
         flash('No file part', 'error')
-        return redirect(request.url)
+        return redirect(url_for('analyze'))
     
     file = request.files['mri_image']
     
     if file.filename == '':
         flash('No selected file', 'error')
-        return redirect(request.url)
+        return redirect(url_for('analyze'))
     
     if file and allowed_file(file.filename):
         # Save original image
@@ -196,8 +270,8 @@ def upload_file():
         plt.savefig(result_path, bbox_inches='tight')
         plt.close()
         
-        # Get a summary from Gemini (simulated)
-        summary = get_bioGPT_summary(predicted_class, confidence)
+        # Get an educational insight summary from OpenRouter via an OpenAI-compatible API.
+        summary = get_openrouter_summary(predicted_class, confidence)
         
         # Save to database
         analysis_id = save_to_database(
@@ -213,7 +287,7 @@ def upload_file():
         return redirect(url_for('result', analysis_id=analysis_id))
     
     flash('Invalid file type. Please upload JPG, JPEG, or PNG files.', 'error')
-    return redirect(request.url)
+    return redirect(url_for('analyze'))
 
 @app.route('/result/<int:analysis_id>')
 def result(analysis_id):
