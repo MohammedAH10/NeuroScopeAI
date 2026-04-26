@@ -73,12 +73,12 @@ def iou(y_true, y_pred, smooth=1):
     return (intersection + smooth) / (union + smooth)
 
 # Load the models
-classification_model = load_model('brain_mri.h5', compile=False)
-segmentation_model = load_model('Unet_model.h5', custom_objects={
-    'dice_coefficient': dice_coefficient,
-    'dice_loss': dice_loss,
-    'iou': iou
-})
+# classification_model = load_model('brain_mri.h5', compile=False)
+# segmentation_model = load_model('Unet_model.h5', custom_objects={
+#     'dice_coefficient': dice_coefficient,
+#     'dice_loss': dice_loss,
+#     'iou': iou
+# })
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
