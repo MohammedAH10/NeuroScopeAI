@@ -1,8 +1,9 @@
 Flask==2.2.3
 Werkzeug==2.2.3
 numpy>=1.22,<1.24
+huggingface_hub
 opencv-python==4.7.0.72
-tensorflow==2.16.0
+tensorflow==2.16.2
 matplotlib==3.7.1
 Pillow==9.5.0
 openai>=1.0.0
