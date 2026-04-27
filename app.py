@@ -4,9 +4,9 @@ import cv2
 import sqlite3
 import tensorflow as tf
 from tensorflow.keras.models import load_model
-import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('Agg') 
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -26,8 +26,15 @@ app.config['RESULTS_FOLDER'] = 'static/results'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  
 app.config['ALLOWED_EXTENSIONS'] = {'jpg', 'jpeg', 'png'}
 app.config['OPENROUTER_MODEL'] = 'openai/gpt-oss-120b'
-app.config['CLASSIFICATION_MODEL_PATH'] = os.environ.get('CLASSIFICATION_MODEL_PATH', 'brain_mri.h5')
-app.config['SEGMENTATION_MODEL_PATH'] = os.environ.get('SEGMENTATION_MODEL_PATH', 'Unet_model.h5')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app.config['CLASSIFICATION_MODEL_PATH'] = os.environ.get(
+    'CLASSIFICATION_MODEL_PATH',
+    os.path.join(BASE_DIR, 'brain_mri.h5')
+)
+app.config['SEGMENTATION_MODEL_PATH'] = os.environ.get(
+    'SEGMENTATION_MODEL_PATH',
+    os.path.join(BASE_DIR, 'Unet_model.h5')
+)
 
 # Create directories
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -83,7 +90,7 @@ def load_models():
     global classification_model, segmentation_model
 
     if classification_model is None:
-        classification_path = app.config['CLASSIFICATION_MODEL_PATH']
+        classification_path = os.path.abspath(app.config['CLASSIFICATION_MODEL_PATH'])
         if not os.path.exists(classification_path):
             raise FileNotFoundError(
                 f"Classification model not found at {classification_path}."
@@ -91,13 +98,14 @@ def load_models():
         classification_model = load_model(classification_path, compile=False)
 
     if segmentation_model is None:
-        segmentation_path = app.config['SEGMENTATION_MODEL_PATH']
+        segmentation_path = os.path.abspath(app.config['SEGMENTATION_MODEL_PATH'])
         if not os.path.exists(segmentation_path):
             raise FileNotFoundError(
                 f"Segmentation model not found at {segmentation_path}."
             )
         segmentation_model = load_model(
             segmentation_path,
+            compile=False,
             custom_objects={
                 'dice_coefficient': dice_coefficient,
                 'dice_loss': dice_loss,
@@ -260,7 +268,7 @@ def upload_file():
 
         try:
             load_models()
-        except FileNotFoundError as exc:
+        except Exception as exc:
             flash(str(exc), 'error')
             return redirect(url_for('analyze'))
         
