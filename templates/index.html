@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}NeuroScope MRI | Intelligent Brain Scan Review{% endblock %}
+{% block title %}NeuroScope AI | Brain MRI Tumor Segmentation And Classification{% endblock %}
 
 {% block content %}
 <section class="relative overflow-hidden rounded-[2rem] glass-card px-6 py-10 sm:px-8 lg:px-12 lg:py-14">
     <div class="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
         <div>
             <div class="fade-up inline-flex items-center gap-2 rounded-full border border-violet-300/15 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-violet-100/80">
-                MRI Tumor Classification and Segmentation
+                NeuroScope AI For Brain MRI Analysis
             </div>
 
             <h1 class="fade-up-delay mt-6 max-w-3xl text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
-                Dark clinical imaging, fast AI review, and a calmer way to inspect brain MRI scans.
+                U-Net powered brain MRI tumor segmentation, classification, and diagnostic support in one workflow.
             </h1>
 
             <p class="fade-up-delay-2 mt-6 max-w-2xl text-base leading-8 soft-text sm:text-lg">
-                NeuroScope MRI is a medical-inspired landing interface for uploading a brain MRI image, classifying tumor likelihood, generating a segmentation overlay, and storing the result history in a single workflow.
+                NeuroScope AI is a deep learning medical assistant built with TensorFlow and Keras. It takes a brain MRI image, segments and masks suspicious tumor regions, classifies the scan as glioma, pituitary, meningioma, or no_tumor, and generates a summary of findings to support radiologists during diagnosis.
             </p>
 
             <div class="fade-up-delay-2 mt-8 flex flex-col gap-4 sm:flex-row">
@@ -30,15 +30,15 @@
             <div class="mt-8 grid gap-4 sm:grid-cols-3">
                 <div class="stat-chip rounded-2xl p-4 fade-up">
                     <p class="text-xs uppercase tracking-[0.2em] text-white/45">Output</p>
-                    <p class="mt-2 text-lg font-semibold text-white">Tumor Class</p>
+                    <p class="mt-2 text-lg font-semibold text-white">4-Class Prediction</p>
                 </div>
                 <div class="stat-chip rounded-2xl p-4 fade-up-delay">
                     <p class="text-xs uppercase tracking-[0.2em] text-white/45">Overlay</p>
-                    <p class="mt-2 text-lg font-semibold text-white">Segmentation Mask</p>
+                    <p class="mt-2 text-lg font-semibold text-white">Tumor Segmentation Mask</p>
                 </div>
                 <div class="stat-chip rounded-2xl p-4 fade-up-delay-2">
-                    <p class="text-xs uppercase tracking-[0.2em] text-white/45">Tracking</p>
-                    <p class="mt-2 text-lg font-semibold text-white">Saved History</p>
+                    <p class="text-xs uppercase tracking-[0.2em] text-white/45">Summary</p>
+                    <p class="mt-2 text-lg font-semibold text-white">Findings For Review</p>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                 <div class="mb-4 flex items-center justify-between">
                     <div>
                         <p class="text-xs uppercase tracking-[0.22em] text-violet-100/50">Live Preview</p>
-                        <h2 class="mt-1 text-2xl font-bold text-white">Clinical AI Dashboard</h2>
+                        <h2 class="mt-1 text-2xl font-bold text-white">NeuroScope AI Pipeline</h2>
                     </div>
                     <span class="rounded-full border border-emerald-300/20 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-100">Ready</span>
                 </div>
@@ -56,8 +56,8 @@
                 <div class="grid gap-4">
                     <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-[#1b1731] to-[#271146] p-4">
                         <div class="flex items-center justify-between text-sm text-white/70">
-                            <span>Scan Focus</span>
-                            <span>Brain MRI</span>
+                            <span>Primary Input</span>
+                            <span>Brain MRI Scan</span>
                         </div>
                         <div class="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-[#090811] p-4">
                             <svg viewBox="0 0 360 220" class="h-auto w-full">
@@ -79,11 +79,11 @@
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                             <p class="text-xs uppercase tracking-[0.2em] text-white/45">Model Tasks</p>
-                            <p class="mt-2 text-sm leading-7 text-white/75">Upload, classify, segment, summarize, and review past analyses from one workflow.</p>
+                            <p class="mt-2 text-sm leading-7 text-white/75">Segment tumor regions, classify the scan, and generate a concise findings summary from one submission.</p>
                         </div>
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                            <p class="text-xs uppercase tracking-[0.2em] text-white/45">Design Language</p>
-                            <p class="mt-2 text-sm leading-7 text-white/75">Dark gray and dark purple glassmorphism with medical motion cues and clean contrast.</p>
+                            <p class="text-xs uppercase tracking-[0.2em] text-white/45">Clinical Role</p>
+                            <p class="mt-2 text-sm leading-7 text-white/75">A medical assistant intended to help radiologists inspect MRI findings with faster visual and categorical cues.</p>
                         </div>
                     </div>
                 </div>
@@ -94,18 +94,18 @@
 
 <section id="full-description" class="section-anchor mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
     <div class="glass-panel rounded-[2rem] p-6 sm:p-8">
-        <p class="text-xs uppercase tracking-[0.24em] text-violet-100/50">UI Description</p>
-        <h2 class="mt-3 text-3xl font-bold text-white">An intelligent diagnostic workspace for brain MRI analysis.</h2>
+        <p class="text-xs uppercase tracking-[0.24em] text-violet-100/50">Project Description</p>
+        <h2 class="mt-3 text-3xl font-bold text-white">NeuroScope AI is designed for intelligent brain MRI tumor analysis.</h2>
         <p class="mt-5 text-sm leading-8 soft-text sm:text-base">
-            This interface powers an AI-driven system for brain MRI interpretation, combining precise segmentation with multiclass tumor classification. It highlights regions of interest while simultaneously predicting tumor categories, enabling a structured and focused analysis workflow. The design prioritizes clarity, ensuring users can quickly interpret both visual masks and classification results without distraction.
+            The project is centered on a deep learning neural network workflow for brain MRI interpretation. Its core model behavior is to detect whether a tumor-like region is present, segment that region, apply a mask to highlight it, and then classify the case into glioma, pituitary, meningioma, or no_tumor. The system is built to turn raw scan input into structured visual and categorical output that can be reviewed quickly.
         </p>
     </div>
 
     <div class="glass-panel rounded-[2rem] p-6 sm:p-8">
         <p class="text-xs uppercase tracking-[0.24em] text-violet-100/50">Full Description</p>
-        <h2 class="mt-3 text-3xl font-bold text-white">What this experience is designed to do.</h2>
+        <h2 class="mt-3 text-3xl font-bold text-white">What the model and interface are built to deliver.</h2>
         <p class="mt-5 text-sm leading-8 soft-text sm:text-base">
-            This platform provides an end-to-end MRI analysis pipeline where users can upload brain scans and receive both segmentation masks and tumor classification outputs. The system identifies and localizes abnormal regions while categorizing them into multiple tumor classes, offering a more comprehensive diagnostic insight. Designed as a responsive, AI-powered medical tool, it transforms complex model outputs into an accessible and streamlined experience across mobile, tablet, and desktop devices.
+            NeuroScope AI is built with TensorFlow and Keras and uses a U-Net based segmentation approach as part of its analysis pipeline. After processing an uploaded brain MRI, it produces a tumor mask, a multiclass prediction, and a summary of findings intended to support diagnostic review. The interface brings these outputs together in a single medical assistant workflow that helps radiologists inspect suspicious regions with more speed and structure.
         </p>
     </div>
 </section>
@@ -113,20 +113,20 @@
 <section id="how-to-use" class="section-anchor mt-8 grid gap-6 lg:grid-cols-3">
     <div class="glass-panel rounded-[2rem] p-6">
         <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-lg font-bold text-violet-100">1</div>
-        <h3 class="text-xl font-bold text-white">Read The Overview</h3>
-        <p class="mt-3 text-sm leading-7 soft-text">Start on the landing page to understand the workflow, outputs, and intended use of the MRI analysis interface.</p>
+        <h3 class="text-xl font-bold text-white">Upload A Brain MRI</h3>
+        <p class="mt-3 text-sm leading-7 soft-text">Start the workflow by moving into the analysis page and submitting a brain MRI image for model processing.</p>
     </div>
 
     <div class="glass-panel rounded-[2rem] p-6">
         <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-lg font-bold text-violet-100">2</div>
-        <h3 class="text-xl font-bold text-white">Go To Analysis</h3>
-        <p class="mt-3 text-sm leading-7 soft-text">Use the `Get Started` button to move into the dedicated upload workspace where the scan is submitted.</p>
+        <h3 class="text-xl font-bold text-white">Run Segmentation And Classification</h3>
+        <p class="mt-3 text-sm leading-7 soft-text">The model segments the tumor region if one is detected, masks the area, and classifies the scan into one of four diagnostic categories.</p>
     </div>
 
     <div class="glass-panel rounded-[2rem] p-6">
         <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-lg font-bold text-violet-100">3</div>
-        <h3 class="text-xl font-bold text-white">Review Output</h3>
-        <p class="mt-3 text-sm leading-7 soft-text">Inspect the overlay image, detected class, confidence score, and stored analysis history from the same interface.</p>
+        <h3 class="text-xl font-bold text-white">Review Findings Summary</h3>
+        <p class="mt-3 text-sm leading-7 soft-text">Inspect the generated mask, predicted tumor class, confidence score, and summary of findings to support radiology review.</p>
     </div>
 </section>
 {% endblock %}
