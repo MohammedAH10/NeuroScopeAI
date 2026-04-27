@@ -26,6 +26,8 @@ app.config['RESULTS_FOLDER'] = 'static/results'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  
 app.config['ALLOWED_EXTENSIONS'] = {'jpg', 'jpeg', 'png'}
 app.config['OPENROUTER_MODEL'] = 'openai/gpt-oss-120b'
+app.config['CLASSIFICATION_MODEL_PATH'] = os.environ.get('CLASSIFICATION_MODEL_PATH', 'brain_mri.h5')
+app.config['SEGMENTATION_MODEL_PATH'] = os.environ.get('SEGMENTATION_MODEL_PATH', 'Unet_model.h5')
 
 # Create directories
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -73,12 +75,35 @@ def iou(y_true, y_pred, smooth=1):
     return (intersection + smooth) / (union + smooth)
 
 # Load the models
-# classification_model = load_model('brain_mri.h5', compile=False)
-# segmentation_model = load_model('Unet_model.h5', custom_objects={
-#     'dice_coefficient': dice_coefficient,
-#     'dice_loss': dice_loss,
-#     'iou': iou
-# })
+classification_model = None
+segmentation_model = None
+
+
+def load_models():
+    global classification_model, segmentation_model
+
+    if classification_model is None:
+        classification_path = app.config['CLASSIFICATION_MODEL_PATH']
+        if not os.path.exists(classification_path):
+            raise FileNotFoundError(
+                f"Classification model not found at {classification_path}."
+            )
+        classification_model = load_model(classification_path, compile=False)
+
+    if segmentation_model is None:
+        segmentation_path = app.config['SEGMENTATION_MODEL_PATH']
+        if not os.path.exists(segmentation_path):
+            raise FileNotFoundError(
+                f"Segmentation model not found at {segmentation_path}."
+            )
+        segmentation_model = load_model(
+            segmentation_path,
+            custom_objects={
+                'dice_coefficient': dice_coefficient,
+                'dice_loss': dice_loss,
+                'iou': iou
+            }
+        )
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -232,6 +257,12 @@ def upload_file():
         saved_filename = f"{timestamp}_{filename}"
         original_path = os.path.join(app.config['UPLOAD_FOLDER'], saved_filename)
         file.save(original_path)
+
+        try:
+            load_models()
+        except FileNotFoundError as exc:
+            flash(str(exc), 'error')
+            return redirect(url_for('analyze'))
         
         # Classify the image
         classification_input = preprocess_image_for_classification(original_path)
@@ -317,4 +348,5 @@ def history():
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
